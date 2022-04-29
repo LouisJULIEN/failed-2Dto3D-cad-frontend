@@ -1,42 +1,44 @@
-<!doctype html>
-<html class="no-js" lang="">
-
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <meta charset="utf-8">
-  <title></title>
-  <meta name="description" content="">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-
-  <meta property="og:title" content="">
-  <meta property="og:type" content="">
-  <meta property="og:url" content="">
-  <meta property="og:image" content="">
-
-  <link rel="manifest" href="site.webmanifest">
-  <link rel="apple-touch-icon" href="icon.png">
-  <!-- Place favicon.ico in the root directory -->
-
-  <link rel="stylesheet" href="css/normalize.css">
-  <link rel="stylesheet" href="css/main.css">
-
-  <meta name="theme-color" content="#fafafa">
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="js/two.js"></script>
 </head>
-
 <body>
 
-  <!-- Add your site or application content here -->
-  <p>Hello world! This is HTML5 Boilerplate.</p>
 
-  <script src="js/vendor/modernizr-3.11.2.min.js"></script>
-  <script src="js/plugins.js"></script>
-  <script src="js/main.js"></script>
+<script>
+    // Make an instance of two and place it on the page.
+    var params = {
+        fullscreen: true
+    };
+    var elem = document.body;
+    var two = new Two(params).appendTo(elem);
 
-  <!-- Google Analytics: change UA-XXXXX-Y to be your site's ID. -->
-  <script>
-    window.ga = function () { ga.q.push(arguments) }; ga.q = []; ga.l = +new Date;
-    ga('create', 'UA-XXXXX-Y', 'auto'); ga('set', 'anonymizeIp', true); ga('set', 'transport', 'beacon'); ga('send', 'pageview')
-  </script>
-  <script src="https://www.google-analytics.com/analytics.js" async></script>
+    // Two.js has convenient methods to make shapes and insert them into the scene.
+    var radius = 50;
+    var x = two.width * 0.5;
+    var y = two.height * 0.5 - radius * 1.25;
+    var circle = two.makeCircle(x, y, radius);
+
+    y = two.height * 0.5 + radius * 1.25;
+    var width = 100;
+    var height = 100;
+    var rect = two.makeRectangle(x, y, width, height);
+
+    // The object returned has many stylable properties:
+    circle.fill = '#FF8000';
+    // And accepts all valid CSS color:
+    circle.stroke = 'orangered';
+    circle.linewidth = 5;
+
+    rect.fill = 'rgb(0, 200, 255)';
+    rect.opacity = 0.75;
+    rect.noStroke();
+
+    // Don’t forget to tell two to draw everything to the screen
+    two.update();
+</script>
 </body>
-
 </html>
