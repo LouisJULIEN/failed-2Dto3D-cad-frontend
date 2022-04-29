@@ -41,7 +41,7 @@ Projection Y-Z (X constant). Valeur de X : <input type="number" id="projection-y
     mouse.selected.visible = false;
 
     var content = two.makeGroup(); // Everything that is drawn black
-    var interaction = two.makeGroup();  // All the blue / pink interactive elements
+    var interaction = two.makeGroup();  // All the blue interactive elements
 
     // The blue path highlight
     var selection = new Two.Path();
@@ -51,22 +51,6 @@ Projection Y-Z (X constant). Valeur de X : <input type="number" id="projection-y
     selection.visible = false;
 
     interaction.add(selection);
-
-    // The pink control handles
-    var controls = new Two.Group();
-    controls.left = new Two.Circle(0, 0, 2);
-    controls.right = new Two.Circle(0, 0, 2);
-    controls.line = new Two.Path([
-        new Two.Anchor(),
-        new Two.Anchor(),
-        new Two.Anchor()
-    ]);
-    controls.left.translation.bind(Two.Events.Types.change, updateControlHandles);
-    controls.right.translation.bind(Two.Events.Types.change, updateControlHandles);
-    controls.add(controls.line, controls.left, controls.right);
-    controls.stroke = '#FF00AE';
-    controls.anchor = null;
-    interaction.add(controls);
 
     // A list of all the editable anchor points
     var points = new Two.Points();
@@ -101,9 +85,6 @@ Projection Y-Z (X constant). Valeur de X : <input type="number" id="projection-y
         anchor.command = Two.Commands[path.vertices.length > 0 ? 'curve' : 'move'];
 
         path.vertices.push(anchor);
-        controls.anchor = anchor;
-        controls.left.translation.copy(anchor);
-        controls.right.translation.copy(anchor);
 
         return anchor;
 
@@ -117,8 +98,6 @@ Projection Y-Z (X constant). Valeur de X : <input type="number" id="projection-y
     }
 
     function close(x, y) {
-
-        controls.anchor = null;
         path.closed = true;
         deselect();
 
@@ -140,20 +119,6 @@ Projection Y-Z (X constant). Valeur de X : <input type="number" id="projection-y
 
     }
 
-    function updateControlHandles() {
-
-        // Update the pink control handles based on whatever the current
-        // path's details are — keeps things in sync
-
-        if (!controls.anchor) {
-            return;
-        }
-
-        controls.line.vertices[0].copy(controls.left.translation);
-        controls.line.vertices[1].copy(controls.anchor);
-        controls.line.vertices[2].copy(controls.right.translation);
-
-    }
 
     /**
      * Browser interactions handle below
@@ -180,7 +145,6 @@ Projection Y-Z (X constant). Valeur de X : <input type="number" id="projection-y
             }
         }
 
-        window.addEventListener('mousemove', drag, false);
         window.addEventListener('mouseup', mouseup, false);
 
     }
@@ -193,13 +157,9 @@ Projection Y-Z (X constant). Valeur de X : <input type="number" id="projection-y
 
         var first = path.vertices[0];
 
-        if (!first.controls.left.isZero() || !first.controls.right.isZero()) {
-            // Hack to emulate closing, but actually using
-            // one last point to simulate the left control handle
-            // of the first point.
-            var last = add(first.x, first.y);
-            last.controls.left.copy(first.controls.left);
-        }
+        var last = add(first.x, first.y);
+        last.controls.left.copy(first.controls.left);
+
 
         close();
 
@@ -243,51 +203,6 @@ Projection Y-Z (X constant). Valeur de X : <input type="number" id="projection-y
 
     }
 
-    function drag(e) {
-
-        mouse.set(e.clientX, e.clientY);
-
-        // Like mousemove, but on the window and only occuring when
-        // we've called `mousedown` effectively creating a drag event
-
-        if (mouse.dragging) {
-
-            if (controls.anchor) {
-
-                var anchor = selection.vertices[selection.vertices.length - 1];
-                anchor.controls.left.copy(mouse).sub(anchor);
-                anchor.controls.right.clear();
-                anchor.trigger(Two.Events.Types.change);
-
-                controls.visible = true;
-                controls.left.translation.copy(anchor.controls.left).add(anchor);
-                controls.right.translation.copy(anchor.controls.right).add(anchor);
-
-            } else {
-
-                // Move an existing point
-                mouse.dragging = 1;
-
-                var object = mouse.intersection.object;
-                object.translation.copy(mouse);
-
-            }
-
-        } else if (controls.anchor) {
-
-            // Move a just created anchor point
-            var anchor = selection.vertices[selection.vertices.length - 1];
-            anchor.controls.right.copy(mouse).sub(anchor);
-            anchor.controls.left.copy(anchor.controls.right).rotate(Math.PI);
-            anchor.trigger(Two.Events.Types.change);
-
-            controls.visible = true;
-            controls.left.translation.copy(anchor.controls.left).add(anchor);
-            controls.right.translation.copy(anchor.controls.right).add(anchor);
-
-        }
-
-    }
 
     function mouseup() {
 
