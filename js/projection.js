@@ -3,6 +3,7 @@ class HandleProjection {
     constructor(projectionName) {
 
         let parentDom = document.getElementById(projectionName)
+        this.parentId = projectionName;
         this.boxBoundingClientRect = parentDom.getBoundingClientRect();
 
         this.two = new Two({
@@ -26,14 +27,22 @@ class HandleProjection {
         }
 
         this.allContent = this.two.makeGroup(); // Everything that is drawn black
-        this.activeContent = this.two.makeGroup();  // All the blue interactive elements
-
+        this.currentContent = this.two.makeGroup();  // stuff to highlight as selected
+        this.currentShape = null;
 
         let domElement = this.two.renderer.domElement;
         console.log(domElement);
         domElement.addEventListener('click', this.mouseclick.bind(this), false);
     }
 
+    createNewCurrentShape() {
+        this.currentShape = new Two.Path();
+        this.currentShape.linewidth = 2;
+        this.currentShape.noFill();
+
+        this.currentContent.vertices = this.currentShape.vertices;
+        this.allContent.add(this.currentShape);
+    }
 
     snapValue(inputValue) {
         let moduloValue = inputValue % this.grideSize;
@@ -50,13 +59,29 @@ class HandleProjection {
     }
 
     mouseclick(e) {
-        let xSnapped = this.snapValue(e.pageX - this.boxBoundingClientRect.x);
-        let ySnapped = this.snapValue(e.pageY - this.boxBoundingClientRect.y);
+        // we click on a empty space
+        console.log(e.target)
+        if (e.target.parentElement.id === this.parentId) {
 
-        let createdPoint = new Two.Circle(xSnapped, ySnapped, 4);
-        createdPoint.className = "projection-point";
-        this.activeContent.add(createdPoint);
+            if (this.currentShape === null) {
+                this.createNewCurrentShape();
+            }
+
+            let xSnapped = this.snapValue(e.pageX - this.boxBoundingClientRect.x);
+            let ySnapped = this.snapValue(e.pageY - this.boxBoundingClientRect.y);
+
+            // create anchor to add as vertex to the current shape
+            let createdAnchor = new Two.Anchor(xSnapped, ySnapped, 0, 0, 0, 0);
+            createdAnchor.className = "projection-point";
+            this.currentShape.vertices.push(createdAnchor);
+
+            // create a circle to highlight where the point was created
+            let createdCircle = new Two.Circle(xSnapped, ySnapped, 4)
+            createdCircle.className = "projection-point";
+            this.currentContent.add(createdCircle);
+
+
+        }
     }
-
 
 }
