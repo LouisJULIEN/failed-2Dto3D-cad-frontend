@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>Title</title>
     <script src="js/two.js"></script>
+    <script src="js/projection.js"></script>
     <link rel="stylesheet" href="css/projection.css">
 </head>
 <body>
@@ -21,6 +22,8 @@ Projection Y-Z (X constant). Valeur de X : <input type="number" id="projection-y
 
 
 <script>
+    var p = new HandleProjection('projection-xz');
+
     var two = new Two({
         type: Two.Types.svg,
         fullscreen: false,
@@ -158,7 +161,6 @@ Projection Y-Z (X constant). Valeur de X : <input type="number" id="projection-y
         var first = path.vertices[0];
 
         var last = add(first.x, first.y);
-        last.controls.left.copy(first.controls.left);
 
 
         close();
@@ -217,47 +219,19 @@ Projection Y-Z (X constant). Valeur de X : <input type="number" id="projection-y
                     remove(mouse.intersection.id);
 
                 } else {
-
-                    if (controls.anchor) {
-
-                        // If there was a modification of control points then
-                        // update the path accordingly.
-
-                        var anchor = path.vertices[path.vertices.length - 1];
-
-                        anchor.controls.left.copy(controls.left.translation).sub(anchor);
-                        anchor.controls.right.copy(controls.right.translation).sub(anchor);
-
-                        anchor.trigger(Two.Events.Types.change);
-
-                    }
-
                     close();
-
                 }
 
             }
 
-        } else if (controls.anchor) {
-
-            // Set the control point from the anchor to the corresponding path
-            var anchor = path.vertices[path.vertices.length - 1];
-            anchor.controls.left.copy(controls.left.translation).sub(anchor);
-            anchor.controls.right.copy(controls.right.translation).sub(anchor);
-            anchor.trigger(Two.Events.Types.change);
-
         }
-
         // Reset listeners and context aware variables.
-
-        window.removeEventListener('mousemove', drag, false);
         window.removeEventListener('mouseup', mouseup, false);
 
         mouse.dragging = false;
         mouse.intersection = null;
 
         selection.closed = false;
-        controls.visible = false;
 
     }</script>
 </body>

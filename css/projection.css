@@ -1,15 +1,26 @@
-.projection{
+.projection {
     border: black 2px solid;
     height: 200px;
     width: 400px;
 }
 
-.xy{
+.xy {
     border-color: red;
 }
-.xz{
+
+.xz {
     border-color: green;
 }
-.yz{
+
+.yz {
     border-color: blue;
+}
+
+.background-stroke {
+    stroke: #6dcff6;
+}
+
+.projection-point {
+    fill: blue;
+    stroke: #00AEFF;
 }
