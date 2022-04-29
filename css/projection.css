@@ -1,0 +1,15 @@
+.projection{
+    border: black 2px solid;
+    height: 200px;
+    width: 400px;
+}
+
+.xy{
+    border-color: red;
+}
+.xz{
+    border-color: green;
+}
+.yz{
+    border-color: blue;
+}
