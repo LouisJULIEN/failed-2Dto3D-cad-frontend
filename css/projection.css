@@ -1,23 +1,23 @@
 .projection {
-    border: black 2px solid;
+    outline: black 2px solid;
     height: 200px;
     width: 400px;
 }
 
 .xy {
-    border-color: red;
+    outline-color: red;
 }
 
 .xz {
-    border-color: green;
+    outline-color: green;
 }
 
 .yz {
-    border-color: blue;
+    outline-color: blue;
 }
 
 .background-stroke {
-    stroke: #6dcff6;
+    stroke: #aa735c;
 }
 
 .projection-point {
