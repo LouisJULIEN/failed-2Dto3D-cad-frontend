@@ -20,7 +20,6 @@ class HandleProjection {
         this.snapTolerance = 5;
 
         this.backgroundGrid = this.two.makeGroup();
-        this.allHumanDrawnContent = this.two.makeGroup(); // Everything that is drawn black
         this.currentContent = this.two.makeGroup();  // stuff to highlight as selected
         this.currentShape = null;
 
@@ -50,11 +49,11 @@ class HandleProjection {
 
     createNewCurrentShape() {
         this.currentShape = new Two.Path();
+        this.currentShape.curved = false;
         this.currentShape.linewidth = 2;
         this.currentShape.noFill();
 
-        this.currentContent.vertices = this.currentShape.vertices;
-        this.allHumanDrawnContent.add(this.currentShape);
+        this.currentContent.add(this.currentShape);
     }
 
     addVertexToCurrentShape(xPos, yPos) {
@@ -62,6 +61,12 @@ class HandleProjection {
         let createdAnchor = new Two.Anchor(xPos, yPos, 0, 0, 0, 0);
         createdAnchor.className = "projection-point";
         this.currentShape.vertices.push(createdAnchor);
+
+        // create a circle to highlight where the point was created
+        let createdCircle = new Two.Circle(xPos, yPos, 4)
+        createdCircle.className = "projection-point";
+        createdCircle.targetAnchor = createdAnchor;
+        this.currentContent.add(createdCircle);
     }
 
     snapValue(inputValue) {
@@ -100,14 +105,8 @@ class HandleProjection {
             let xSnapped = this.snapValue(e.pageX - this.boxBoundingClientRect.x);
             let ySnapped = this.snapValue(e.pageY - this.boxBoundingClientRect.y);
 
-
             // create anchor to add as vertex to the current shape
             this.addVertexToCurrentShape(xSnapped, ySnapped)
-
-            // create a circle to highlight where the point was created
-            let createdCircle = new Two.Circle(xSnapped, ySnapped, 4)
-            createdCircle.className = "projection-point";
-            this.currentContent.add(createdCircle);
         }
         this.draggedElement = null;
     }
@@ -115,8 +114,12 @@ class HandleProjection {
     mouseMove(e) {
         if (this.draggedElement) {
             this.isDragging = true;
-            this.draggedElement.position.x = e.pageX - this.boxBoundingClientRect.x
-            this.draggedElement.position.y = e.pageY - this.boxBoundingClientRect.y
+            const valueX = this.snapValue(e.pageX - this.boxBoundingClientRect.x)
+            const valueY = this.snapValue(e.pageY - this.boxBoundingClientRect.y)
+            this.draggedElement.position.x = valueX;
+            this.draggedElement.position.y = valueY;
+            this.draggedElement.targetAnchor.x = valueX;
+            this.draggedElement.targetAnchor.y = valueY;
         }
     }
 
@@ -126,9 +129,8 @@ class HandleProjection {
             return;
         }
 
-        const firstDrawnPoint = this.currentShape.vertices[0];
-        this.addVertexToCurrentShape(firstDrawnPoint.x, firstDrawnPoint.y);
-        this.drawingNewPointsEnabled = false
+        this.drawingNewPointsEnabled = false;
+        this.currentContent.closed= true;
     }
 
 
