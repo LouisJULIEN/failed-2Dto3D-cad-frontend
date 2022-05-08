@@ -1,4 +1,4 @@
-class HandleProjection {
+class TwoDProjection {
 
     constructor(projectionName) {
 
@@ -33,6 +33,29 @@ class HandleProjection {
         domElement.addEventListener('mousemove', this.mouseMove.bind(this), false);
     }
 
+    exportJSON() {
+        let vertices = {};
+        for (const aVertex of this.currentContent.getByType(Two.Circle)) {
+            vertices[aVertex.id] = aVertex.toObject();
+        }
+        //
+        let edges = {};
+        for (const anEdge of this.currentContent.getByType(Two.Path)) {
+            // filter out circles
+            if(!anEdge.curved) {
+                edges[anEdge.id] = anEdge.toObject();
+            }
+        }
+
+        return {
+            [this.currentShape._id]: {
+                type: 'polygon',
+                vertices,
+                edges,
+            }
+        };
+    }
+
     drawBackgroundGrid() {
         for (let heightPx = 0; heightPx < this.two.height; heightPx += this.grideSize) {
             let line = new Two.Line(0, heightPx, this.two.width, heightPx);
@@ -58,15 +81,19 @@ class HandleProjection {
 
     addVertexToCurrentShape(xPos, yPos) {
         // TODO: check if crossing an existing path
+
+        // create new Path each time
         let createdAnchor = new Two.Anchor(xPos, yPos, 0, 0, 0, 0);
         createdAnchor.className = "projection-point";
-        this.currentShape.vertices.push(createdAnchor);
 
         // create a circle to highlight where the point was created
         let createdCircle = new Two.Circle(xPos, yPos, 4)
         createdCircle.className = "projection-point";
         createdCircle.targetAnchor = createdAnchor;
         this.currentContent.add(createdCircle);
+
+        createdAnchor.targetCircle = createdCircle;
+        this.currentShape.vertices.push(createdAnchor);
     }
 
     snapValue(inputValue) {
@@ -130,7 +157,7 @@ class HandleProjection {
         }
 
         this.drawingNewPointsEnabled = false;
-        this.currentContent.closed= true;
+        this.currentContent.closed = true;
     }
 
 
