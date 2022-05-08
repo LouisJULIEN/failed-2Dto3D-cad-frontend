@@ -21,7 +21,8 @@ class TwoDProjection {
 
         this.backgroundGrid = this.two.makeGroup();
         this.currentContent = this.two.makeGroup();  // stuff to highlight as selected
-        this.currentShape = null;
+        this.currentEdge = null;
+        this.firstVertex = null
 
         this.drawBackgroundGrid()
 
@@ -36,19 +37,20 @@ class TwoDProjection {
     exportJSON() {
         let vertices = {};
         for (const aVertex of this.currentContent.getByType(Two.Circle)) {
-            vertices[aVertex.id] = aVertex.toObject();
+            vertices[aVertex.id] = {x: aVertex.translation.x, y: aVertex.translation.y};
         }
-        //
+
         let edges = {};
         for (const anEdge of this.currentContent.getByType(Two.Path)) {
             // filter out circles
-            if(!anEdge.curved) {
-                edges[anEdge.id] = anEdge.toObject();
+            if (!anEdge.curved) {
+                const vertexIds = anEdge.vertices.map(e => e.targetCircle.id)
+                edges[anEdge.id] = {vertexIds};
             }
         }
 
         return {
-            [this.currentShape._id]: {
+            [this.two.scene._id]: {
                 type: 'polygon',
                 vertices,
                 edges,
@@ -70,16 +72,16 @@ class TwoDProjection {
 
     }
 
-    createNewCurrentShape() {
-        this.currentShape = new Two.Path();
-        this.currentShape.curved = false;
-        this.currentShape.linewidth = 2;
-        this.currentShape.noFill();
+    createNewCurrentEdge() {
+        this.currentEdge = new Two.Path();
+        this.currentEdge.curved = false;
+        this.currentEdge.linewidth = 2;
+        this.currentEdge.noFill();
 
-        this.currentContent.add(this.currentShape);
+        this.currentContent.add(this.currentEdge);
     }
 
-    addVertexToCurrentShape(xPos, yPos) {
+    addVertex(xPos, yPos) {
         // TODO: check if crossing an existing path
 
         // create new Path each time
@@ -93,7 +95,20 @@ class TwoDProjection {
         this.currentContent.add(createdCircle);
 
         createdAnchor.targetCircle = createdCircle;
-        this.currentShape.vertices.push(createdAnchor);
+
+        // no existing edge
+        if (this.currentEdge === null) {
+            this.createNewCurrentEdge();
+            this.firstVertex = createdAnchor;
+        }
+
+        this.currentEdge.vertices.push(createdAnchor);
+
+        // if edge has 2 points, create a new edge
+        if (this.currentEdge.vertices.length >= 2) {
+            this.createNewCurrentEdge();
+            this.currentEdge.vertices.push(createdAnchor);
+        }
     }
 
     snapValue(inputValue) {
@@ -124,16 +139,11 @@ class TwoDProjection {
         // we click on a empty space
         // TODO: fix this if
         if (e.target.parentElement.id === this.parentId && this.drawingNewPointsEnabled && !this.isDragging) {
-
-            if (this.currentShape === null) {
-                this.createNewCurrentShape();
-            }
-
             let xSnapped = this.snapValue(e.pageX - this.boxBoundingClientRect.x);
             let ySnapped = this.snapValue(e.pageY - this.boxBoundingClientRect.y);
 
             // create anchor to add as vertex to the current shape
-            this.addVertexToCurrentShape(xSnapped, ySnapped)
+            this.addVertex(xSnapped, ySnapped)
         }
         this.draggedElement = null;
     }
@@ -152,12 +162,12 @@ class TwoDProjection {
 
 
     doubleClick() {
-        if (!this.currentShape || this.currentShape.vertices.length <= 2) {
+        if (!this.firstVertex) {
             return;
         }
 
+        this.currentEdge.vertices.push(this.firstVertex);
         this.drawingNewPointsEnabled = false;
-        this.currentContent.closed = true;
     }
 
 
