@@ -6,7 +6,9 @@
     <script src="js/two.js"></script>
     <script src="js/twoDprojection.js"></script>
     <script src="js/allTwoDProjections.js"></script>
+    <script src="js/three.js"></script>
     <link rel="stylesheet" href="css/projection.css">
+    <link rel="stylesheet" href="css/reconstruction.css">
 </head>
 <body>
 
@@ -21,9 +23,83 @@ Projection X-Z (Y constant).
 <div id="projection-yz" class="projection yz"></div>
 Projection Y-Z (X constant).
 
+<div id="reconstruction-3D"></div>
 
 <script>
     var all = new AllTwoDProjections('projection');
+</script>
+<script>
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0xdedede);
+    const htmlDOMReconstruction = document.getElementById('reconstruction-3D');
+    const camera = new THREE.PerspectiveCamera(75,
+        htmlDOMReconstruction.offsetWidth / htmlDOMReconstruction.offsetHeight,
+        0.1, 1000);
+    camera.position.set(0, 0, -30)
+    camera.lookAt(0, 0, 0);
+
+
+    const renderer = new THREE.WebGLRenderer();
+    renderer.setSize(htmlDOMReconstruction.offsetWidth, htmlDOMReconstruction.offsetHeight);
+    htmlDOMReconstruction.appendChild(renderer.domElement);
+
+
+    const input = {
+        dandling: {},
+        reconstructed: {
+            vertices: {
+                '12': {
+                    x: 0.0,
+                    y: 0.0,
+                    z: 0.0,
+                    linkedTo: []
+                },
+                '16': {
+                    x: 10.0,
+                    y: 10.0,
+                    z: 0.0,
+                    linkedTo: ['1', '4']
+                },
+
+            },
+            edges: {
+                '1': {
+                    verticesIds: ['12', '16']
+                }
+            },
+        }
+    }
+
+    const reconstructed3DVertices = {};
+    for (const [aPointId, aPointData] of Object.entries(input['reconstructed']['vertices'])) {
+        reconstructed3DVertices[aPointId] = new THREE.Vector3(aPointData.x, aPointData.y, aPointData.z)
+    }
+
+    const redPointColor = new THREE.PointsMaterial({color: 0xf05d4a})
+    const threeDVertices = new THREE.BufferGeometry().setFromPoints(Object.values(reconstructed3DVertices));
+    const threeDPoints = new THREE.Points(threeDVertices, redPointColor);
+    scene.add(threeDPoints);
+
+    const reconstructed3DEdges = {};
+    const blueLineColor = new THREE.LineBasicMaterial({color: 0x5da5ab});
+    for (const [anEdgeId, anEdgeData] of Object.entries(input['reconstructed']['edges'])) {
+        const edgeVertices = [];
+        for (const aVertexId of anEdgeData['verticesIds']) {
+            edgeVertices.push(reconstructed3DVertices[aVertexId]);
+        }
+        const edge = new THREE.BufferGeometry().setFromPoints(edgeVertices);
+        reconstructed3DEdges[anEdgeId] = new THREE.Line(edge, blueLineColor);
+    }
+    scene.add(...Object.values(reconstructed3DEdges));
+
+    function animate() {
+        requestAnimationFrame(animate);
+
+        renderer.render(scene, camera);
+    }
+
+    animate();
+
 </script>
 </body>
 </html>

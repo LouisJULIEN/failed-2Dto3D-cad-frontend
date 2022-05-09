@@ -3,8 +3,6 @@ class AllTwoDProjections {
         this.projectionXY = new TwoDProjection(projectionNamePrefix + '-xy');
         this.projectionXZ = new TwoDProjection(projectionNamePrefix + '-xz');
         this.projectionYZ = new TwoDProjection(projectionNamePrefix + '-yz');
-
-        this.reconstructInThreeD();
     }
 
     exportJSON() {
@@ -16,7 +14,7 @@ class AllTwoDProjections {
     }
 
     reconstructInThreeD() {
-        var xhr = new XMLHttpRequest();
+        let xhr = new XMLHttpRequest();
         xhr.open("POST", 'http://localhost:5000/reconstruct', true);
 
         xhr.setRequestHeader("Content-Type", "application/json");
