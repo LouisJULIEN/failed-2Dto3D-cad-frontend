@@ -8,7 +8,7 @@
     <script src="js/lib/three-orbit-controls.js"></script>
     <script src="js/reconstructed.js"></script>
     <script src="js/twoDprojection.js"></script>
-    <script src="js/allTwoDProjections.js"></script>
+    <script src="js/allRepresentations.js"></script>
     <link rel="stylesheet" href="css/projection.css">
     <link rel="stylesheet" href="css/reconstruction.css">
 </head>
@@ -24,43 +24,13 @@ Projection X-Z (Y constant).
 
 <div id="projection-yz" class="projection yz"></div>
 Projection Y-Z (X constant).
-
+<br>
+<button id="btn-reconstruct-3D">Reconstruction</button>
+<br>
 <div id="reconstruction-3D"></div>
 
 <script>
-    var all = new AllTwoDProjections('projection');
-</script>
-<script>
-    let threeD = new Draw3DReconstructed('reconstruction-3D');
-    const input = {
-        dandling: {},
-        reconstructed: {
-            vertices: {
-                '12': {
-                    x: 0.0,
-                    y: 0.0,
-                    z: 0.0,
-                    linkedTo: []
-                },
-                '16': {
-                    x: 10.0,
-                    y: 10.0,
-                    z: 0.0,
-                    linkedTo: ['1', '4']
-                },
-
-            },
-            edges: {
-                '1': {
-                    verticesIds: ['12', '16']
-                }
-            },
-        }
-    }
-    threeD.drawReconstructed(input)
-
-    threeD.animate();
-
+    var all = new AllRepresentations('projection');
 </script>
 </body>
 </html>

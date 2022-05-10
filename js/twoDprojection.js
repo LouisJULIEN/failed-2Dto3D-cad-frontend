@@ -1,8 +1,10 @@
 class TwoDProjection {
 
-    constructor(projectionName) {
+    constructor(projectionName, constantAxis, constantAxisValue = 0.0) {
+        let parentDom = document.getElementById(projectionName);
+        this.constantAxis = constantAxis;
+        this.constantAxisValue = constantAxisValue;
 
-        let parentDom = document.getElementById(projectionName)
         this.parentId = projectionName;
         this.boxBoundingClientRect = parentDom.getBoundingClientRect();
 
@@ -37,7 +39,19 @@ class TwoDProjection {
     exportJSON() {
         let vertices = {};
         for (const aVertex of this.currentContent.getByType(Two.Circle)) {
-            vertices[aVertex.id] = {x: aVertex.translation.x, y: aVertex.translation.y};
+
+            if (this.constantAxis === 'x') {
+                vertices[aVertex.id] = {x: this.constantAxisValue, y: aVertex.translation.x, z: aVertex.translation.y};
+
+            } else if (this.constantAxis === 'y') {
+                vertices[aVertex.id] = {x: aVertex.translation.x, y: this.constantAxisValue, z: aVertex.translation.y};
+
+            } else if (this.constantAxis === 'z') {
+                vertices[aVertex.id] = {x: aVertex.translation.x, y: aVertex.translation.y, z: this.constantAxisValue};
+            } else {
+                alert('constant axis is not consistent')
+            }
+
         }
 
         let edges = {};
@@ -89,7 +103,7 @@ class TwoDProjection {
         createdAnchor.className = "projection-point";
 
         // create a circle to highlight where the point was created
-        let createdCircle = new Two.Circle(xPos, yPos, 4)
+        let createdCircle = new Two.Circle(xPos, yPos, 5)
         createdCircle.className = "projection-point";
         createdCircle.targetAnchor = createdAnchor;
         this.currentContent.add(createdCircle);

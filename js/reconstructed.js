@@ -21,6 +21,12 @@ class Draw3DReconstructed {
 
 
     drawReconstructed(input) {
+        // erase existing points
+        while (this.scene.children.length)
+        {
+            this.scene.remove(this.scene.children[0]);
+        }
+
         const reconstructed3DVertices = {};
         for (const [aPointId, aPointData] of Object.entries(input['reconstructed']['vertices'])) {
             reconstructed3DVertices[aPointId] = new THREE.Vector3(aPointData.x, aPointData.y, aPointData.z)
@@ -35,13 +41,17 @@ class Draw3DReconstructed {
         const blueLineColor = new THREE.LineBasicMaterial({color: 0x5da5ab});
         for (const [anEdgeId, anEdgeData] of Object.entries(input['reconstructed']['edges'])) {
             const edgeVertices = [];
-            for (const aVertexId of anEdgeData['verticesIds']) {
+            for (const aVertexId of anEdgeData['threeDPointsIds']) {
                 edgeVertices.push(reconstructed3DVertices[aVertexId]);
             }
             const edge = new THREE.BufferGeometry().setFromPoints(edgeVertices);
             reconstructed3DEdges[anEdgeId] = new THREE.Line(edge, blueLineColor);
         }
-        this.scene.add(...Object.values(reconstructed3DEdges));
+
+
+        if (Object.keys(reconstructed3DEdges).length > 0) {
+            this.scene.add(...Object.values(reconstructed3DEdges));
+        }
     }
 
     animate() {
