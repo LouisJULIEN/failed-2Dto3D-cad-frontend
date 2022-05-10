@@ -137,8 +137,7 @@ class TwoDProjection {
 
     mouseUp(e) {
         // we click on a empty space
-        // TODO: fix this if
-        if (e.target.parentElement.id === this.parentId && this.drawingNewPointsEnabled && !this.isDragging) {
+        if (!e.target.classList.contains('projection-point') && this.drawingNewPointsEnabled && !this.isDragging) {
             let xSnapped = this.snapValue(e.pageX - this.boxBoundingClientRect.x);
             let ySnapped = this.snapValue(e.pageY - this.boxBoundingClientRect.y);
 
