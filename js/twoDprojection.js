@@ -59,7 +59,9 @@ class TwoDProjection {
             // filter out circles
             if (!anEdge.curved) {
                 const verticesIds = anEdge.vertices.map(e => e.targetCircle.id)
-                edges[anEdge.id] = {verticesIds};
+                if(verticesIds.length >1) {
+                    edges[anEdge.id] = {verticesIds};
+                }
             }
         }
 
