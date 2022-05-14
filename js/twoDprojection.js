@@ -63,11 +63,9 @@ class TwoDProjection {
         }
 
         return {
-            [this.two.scene._id]: {
-                type: 'polygon',
-                vertices,
-                edges,
-            }
+            type: 'polygon',
+            vertices,
+            edges,
         };
     }
 
