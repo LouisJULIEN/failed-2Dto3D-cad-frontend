@@ -94,7 +94,7 @@ class TwoDProjection {
         this.currentContent.add(this.currentEdge);
     }
 
-    addNewVertex(xPos, yPos) {
+    addNewVertexToPath(xPos, yPos) {
         // TODO: check if crossing an existing path
 
         // create new Path each time
@@ -156,7 +156,7 @@ class TwoDProjection {
                 let ySnapped = this.snapValue(e.pageY - this.boxBoundingClientRect.y);
 
                 // create anchor to add as vertex to the current shape
-                this.addNewVertex(xSnapped, ySnapped)
+                this.addNewVertexToPath(xSnapped, ySnapped)
             } else if (e.target.classList.contains('projection-point')) {
                 // we click on existing vertex
                 const targetVertex = this.currentContent.getById(e.target.id);
