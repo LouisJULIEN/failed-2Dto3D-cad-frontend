@@ -15,7 +15,6 @@ class TwoDProjection {
             fitted: true
         }).appendTo(parentDom);
 
-        this.drawingNewPointsEnabled = true;
         this.isDragging = false;
         this.draggedElement = null;
         this.grideSize = 20;
@@ -24,7 +23,6 @@ class TwoDProjection {
         this.backgroundGrid = this.two.makeGroup();
         this.currentContent = this.two.makeGroup();  // stuff to highlight as selected
         this.currentEdge = null;
-        this.firstVertex = null
 
         this.drawBackgroundGrid()
 
@@ -32,7 +30,6 @@ class TwoDProjection {
 
         domElement.addEventListener('mouseup', this.mouseUp.bind(this), false);
         domElement.addEventListener('mousedown', this.mouseDown.bind(this), false);
-        domElement.addEventListener('dblclick', this.doubleClick.bind(this), false);
         domElement.addEventListener('mousemove', this.mouseMove.bind(this), false);
     }
 
@@ -59,7 +56,7 @@ class TwoDProjection {
             // filter out circles
             if (!anEdge.curved) {
                 const verticesIds = anEdge.vertices.map(e => e.targetCircle.id)
-                if(verticesIds.length >1) {
+                if (verticesIds.length > 1) {
                     edges[anEdge.id] = {verticesIds};
                 }
             }
@@ -97,7 +94,7 @@ class TwoDProjection {
         this.currentContent.add(this.currentEdge);
     }
 
-    addVertex(xPos, yPos) {
+    addNewVertex(xPos, yPos) {
         // TODO: check if crossing an existing path
 
         // create new Path each time
@@ -115,7 +112,6 @@ class TwoDProjection {
         // no existing edge
         if (this.currentEdge === null) {
             this.createNewCurrentEdge();
-            this.firstVertex = createdAnchor;
         }
 
         this.currentEdge.vertices.push(createdAnchor);
@@ -152,13 +148,24 @@ class TwoDProjection {
     }
 
     mouseUp(e) {
-        // we click on a empty space
-        if (!e.target.classList.contains('projection-point') && this.drawingNewPointsEnabled && !this.isDragging) {
-            let xSnapped = this.snapValue(e.pageX - this.boxBoundingClientRect.x);
-            let ySnapped = this.snapValue(e.pageY - this.boxBoundingClientRect.y);
+        if (!this.isDragging) {
+            console.log(e.target)
+            if (e.target.nodeName !=='path' && !e.target.classList.contains('projection-point')) {
+                // we click on a empty space
+                let xSnapped = this.snapValue(e.pageX - this.boxBoundingClientRect.x);
+                let ySnapped = this.snapValue(e.pageY - this.boxBoundingClientRect.y);
 
-            // create anchor to add as vertex to the current shape
-            this.addVertex(xSnapped, ySnapped)
+                // create anchor to add as vertex to the current shape
+                this.addNewVertex(xSnapped, ySnapped)
+            } else if (e.target.classList.contains('projection-point')) {
+                // we click on existing vertex
+                const targetVertex = this.currentContent.getById(e.target.id);
+                if (targetVertex.targetAnchor) {
+                    this.addExistingVertexToPath(targetVertex.targetAnchor);
+                }
+            }
+        } else {
+            // TODO: merged point on point
         }
         this.draggedElement = null;
     }
@@ -175,15 +182,22 @@ class TwoDProjection {
         }
     }
 
-
-    doubleClick() {
-        if (!this.firstVertex) {
+    addExistingVertexToPath(targetVertex) {
+        // close current path
+        if (!targetVertex) {
             return;
         }
 
-        this.currentEdge.vertices.push(this.firstVertex);
-        this.drawingNewPointsEnabled = false;
-    }
+        if (this.currentEdge === null) {
+            // add vertex as first path vertex
+            this.createNewCurrentEdge();
+            this.currentEdge.vertices.push(targetVertex);
+        } else {
+            // close current path with vertex
+            this.currentEdge.vertices.push(targetVertex);
+            this.currentEdge = null;
+        }
 
+    }
 
 }
