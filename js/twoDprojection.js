@@ -16,7 +16,7 @@ class TwoDProjection {
         }).appendTo(parentDom);
 
         this.isDragging = false;
-        this.draggedElement = null;
+        this.elementToDrag = null;
         this.grideSize = 20;
         this.snapTolerance = 5;
 
@@ -142,12 +142,13 @@ class TwoDProjection {
         this.isDragging = false;
         if (e.target.classList.contains('projection-point')) {
             const elementId = e.target.id;
-            this.draggedElement = this.currentContent.getById(elementId);
+            this.elementToDrag = this.currentContent.getById(elementId);
         }
     }
 
     mouseUp(e) {
         if (!this.isDragging) {
+            console.log(e.target)
             if (!(e.target?.className?.animVal === 'drawnPath') && !e.target.classList.contains('projection-point')) {
                 // we click on a empty space
                 let xSnapped = this.snapValue(e.pageX - this.boxBoundingClientRect.x);
@@ -165,18 +166,21 @@ class TwoDProjection {
         } else {
             // TODO: merged point on point
         }
-        this.draggedElement = null;
+        this.elementToDrag = null;
     }
 
     mouseMove(e) {
-        if (this.draggedElement) {
-            this.isDragging = true;
+        if (this.elementToDrag) {
             const valueX = this.snapValue(e.pageX - this.boxBoundingClientRect.x)
             const valueY = this.snapValue(e.pageY - this.boxBoundingClientRect.y)
-            this.draggedElement.position.x = valueX;
-            this.draggedElement.position.y = valueY;
-            this.draggedElement.targetAnchor.x = valueX;
-            this.draggedElement.targetAnchor.y = valueY;
+
+            if (valueX !== this.elementToDrag.position.x || valueX !== this.elementToDrag.position.x) {
+                this.isDragging = true;
+            }
+            this.elementToDrag.position.x = valueX;
+            this.elementToDrag.position.y = valueY;
+            this.elementToDrag.targetAnchor.x = valueX;
+            this.elementToDrag.targetAnchor.y = valueY;
         }
     }
 
