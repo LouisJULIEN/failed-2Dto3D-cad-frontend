@@ -87,6 +87,7 @@ class TwoDProjection {
 
     createNewCurrentEdge() {
         this.currentEdge = new Two.Path();
+        this.currentEdge.className = 'drawnPath';
         this.currentEdge.curved = false;
         this.currentEdge.linewidth = 2;
         this.currentEdge.noFill();
@@ -149,8 +150,7 @@ class TwoDProjection {
 
     mouseUp(e) {
         if (!this.isDragging) {
-            console.log(e.target)
-            if (e.target.nodeName !=='path' && !e.target.classList.contains('projection-point')) {
+            if (!(e.target?.className?.animVal === 'drawnPath') && !e.target.classList.contains('projection-point')) {
                 // we click on a empty space
                 let xSnapped = this.snapValue(e.pageX - this.boxBoundingClientRect.x);
                 let ySnapped = this.snapValue(e.pageY - this.boxBoundingClientRect.y);
