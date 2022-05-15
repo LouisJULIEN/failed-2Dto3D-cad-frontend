@@ -168,7 +168,6 @@ class TwoDProjection {
 
     mouseUp(e) {
         if (!this.isDragging) {
-            console.log(e.target)
             if (!(e.target?.className?.animVal === 'drawnPath') && !e.target.classList.contains('projection-point')) {
                 // we click on a empty space
                 let xSnapped = this.snapValue(e.pageX - this.boxBoundingClientRect.x);
