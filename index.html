@@ -9,28 +9,37 @@
     <script src="js/threeDRepresentation.js"></script>
     <script src="js/twoDprojection.js"></script>
     <script src="js/allRepresentations.js"></script>
+    <link rel="stylesheet" href="css/structure.css">
     <link rel="stylesheet" href="css/projection.css">
     <link rel="stylesheet" href="css/reconstruction.css">
 </head>
 <body>
 
-<div id="projection-xy" class="projection-card">
-    <span>Projection X-Y (Z constant)</span>
+<div class="flex-container">
+
+    <div class="flex-child">
+
+        <div id="projection-xy" class="projection-card">
+            <span>Projection X-Y (Z constant)</span>
+        </div>
+
+
+        <div id="projection-xz" class="projection-card">
+            <span>Projection X-Z (Y constant)</span>
+        </div>
+
+
+        <div id="projection-yz" class="projection-card">
+            <span>Projection Y-Z (X constant)</span>
+        </div>
+    </div>
+
+    <div class="flex-child">
+        <div id="reconstruction-3D"></div>
+        <button id="btn-reconstruct-3D">Reconstruction</button>
+    </div>
+
 </div>
-
-
-<div id="projection-xz" class="projection-card">
-    <span>Projection X-Z (Y constant)</span>
-</div>
-
-
-<div id="projection-yz" class="projection-card">
-    <span>Projection Y-Z (X constant)</span>
-</div>
-<br>
-<button id="btn-reconstruct-3D">Reconstruction</button>
-<br>
-<div id="reconstruction-3D"></div>
 
 <script>
     var all = new AllRepresentations('projection');
