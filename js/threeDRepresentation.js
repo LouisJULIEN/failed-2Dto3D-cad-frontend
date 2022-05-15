@@ -14,8 +14,8 @@ class Draw3DReconstructed {
         this.camera = new THREE.PerspectiveCamera(75,
             htmlDOMReconstruction.offsetWidth / htmlDOMReconstruction.offsetHeight,
             0.1, 1000);
-        this.camera.position.set(0, 0, -30);
-        this.camera.lookAt(0, 0, 0);
+        this.camera.position.set(100, 100, 500);
+        this.camera.lookAt(300, 300, 300);
         this.showProjectionPlanes = false;
 
         this.renderGroups = {

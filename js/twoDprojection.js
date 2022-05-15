@@ -12,7 +12,7 @@ class TwoDProjection {
         this.constantAxisValue = constantAxisValue;
 
         this.parentId = projectionName;
-        this.boxBoundingClientRect = parentDom.getBoundingClientRect();
+        this.boxBoundingClientRect = canvasDom.getBoundingClientRect();
 
         this.two = new Two({
             type: Two.Types.SVG,
