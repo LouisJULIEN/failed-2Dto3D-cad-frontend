@@ -71,8 +71,9 @@ class Draw3DReconstructed {
 
     drawReconstructed(input) {
         // erase existing points
-        while (this.scene.children.length) {
-            this.scene.remove(this.renderGroups['3D'].children[0]);
+        while (this.renderGroups['3D'].children.length > 0) {
+            this.renderGroups['3D'].remove(this.renderGroups['3D'].children[0]);
+            console.log('removing', this.renderGroups['3D'].children[0])
         }
 
         const reconstructed3DVertices = {};

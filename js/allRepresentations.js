@@ -40,7 +40,7 @@ class AllRepresentations {
 
     reconstructInThreeD() {
         let xhr = new XMLHttpRequest();
-        xhr.open("POST", 'http://localhost:5000/reconstruct', true);
+        xhr.open("POST", 'http://localhost:8000/reconstruct', true);
 
         xhr.setRequestHeader("Content-Type", "application/json");
 
