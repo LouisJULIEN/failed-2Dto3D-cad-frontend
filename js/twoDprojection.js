@@ -2,6 +2,12 @@ class TwoDProjection {
 
     constructor(projectionName, constantAxis, constantAxisValue = 0.0) {
         let parentDom = document.getElementById(projectionName);
+
+        // create the canvas where the 2D drawing is done
+        let canvasDom = document.createElement("div");
+        canvasDom.classList.add("projection-canvas", "constant-" + constantAxis);
+        parentDom.appendChild(canvasDom);
+
         this.constantAxis = constantAxis;
         this.constantAxisValue = constantAxisValue;
 
@@ -12,8 +18,8 @@ class TwoDProjection {
             type: Two.Types.SVG,
             fullscreen: false,
             autostart: true,
-            fitted: true
-        }).appendTo(parentDom);
+            fitted: true,
+        }).appendTo(canvasDom);
 
         this.isDragging = false;
         this.elementToDrag = null;
@@ -31,6 +37,20 @@ class TwoDProjection {
         domElement.addEventListener('mouseup', this.mouseUp.bind(this), false);
         domElement.addEventListener('mousedown', this.mouseDown.bind(this), false);
         domElement.addEventListener('mousemove', this.mouseMove.bind(this), false);
+
+        this.createResetButton(parentDom);
+    }
+
+    createResetButton(parentDom) {
+        const resetBtn = document.createElement("button");
+        resetBtn.textContent = 'Reset';
+        resetBtn.id = parentDom.id + '-reset-btn';
+        parentDom.appendChild(resetBtn);
+        resetBtn.addEventListener('click', this.resetCanvas.bind(this))
+    }
+
+    resetCanvas() {
+        this.currentContent.remove(this.currentContent.children);
     }
 
     exportJSON() {

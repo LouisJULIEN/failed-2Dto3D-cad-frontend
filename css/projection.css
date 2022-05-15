@@ -1,18 +1,22 @@
-.projection {
+.projection-card{
+
+}
+
+.projection-canvas {
     outline: black 2px solid;
     height: 200px;
     width: 400px;
 }
 
-.xy {
+.constant-z {
     outline-color: red;
 }
 
-.xz {
+.constant-y {
     outline-color: green;
 }
 
-.yz {
+.constant-x {
     outline-color: blue;
 }
 
