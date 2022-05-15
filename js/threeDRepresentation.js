@@ -11,11 +11,9 @@ class Draw3DReconstructed {
         this.scene = new THREE.Scene();
         this.scene.background = new THREE.Color(0xdedede);
         const htmlDOMReconstruction = document.getElementById(domId);
-        this.camera = new THREE.PerspectiveCamera(75,
-            htmlDOMReconstruction.offsetWidth / htmlDOMReconstruction.offsetHeight,
-            0.1, 1000);
-        this.camera.position.set(100, 100, 500);
-        this.camera.lookAt(300, 300, 300);
+        this.camera = new THREE.OrthographicCamera(-10, 300, 300, -10, 0.1, 10000);
+        this.camera.position.set(150, 150, 1000);
+        this.camera.lookAt(150, 150, 0);
         this.showProjectionPlanes = false;
 
         this.renderGroups = {
